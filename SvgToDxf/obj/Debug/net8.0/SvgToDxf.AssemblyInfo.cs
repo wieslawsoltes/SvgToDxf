@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SvgToDxf")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b8cb2faa590d2f5cc9fc8dd22202bff8fa507508")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7f1a8b98eb9907d92d32fcf3aab1a5dfecd3045e")]
 [assembly: System.Reflection.AssemblyProductAttribute("SvgToDxf")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SvgToDxf")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
