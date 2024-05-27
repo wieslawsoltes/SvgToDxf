@@ -5,15 +5,15 @@ var svgPath =
 
 var skPath = SKPath.ParseSvgPathData(svgPath);
 
-Parse(skPath);
+Parse(skPath, new DebugPathIterator());
 
-static void Parse(SKPath path)
+static void Parse(SKPath path, IPathIterator pathIterator)
 {
     using var iterator = path.CreateRawIterator();
     var points = new SKPoint[4];
     SKPathVerb pathVerb;
 
-    // path.FillType
+    // TODO: path.FillType
 
     while ((pathVerb = iterator.Next(points)) != SKPathVerb.Done)
     {
@@ -22,14 +22,14 @@ static void Parse(SKPath path)
             case SKPathVerb.Move:
             {
                 // points[0].X, points[0].Y
-                Console.WriteLine("Move");
+                pathIterator.OnMove(points[0].X, points[0].Y);
                 break;
             }
             case SKPathVerb.Line:
             {
                 // LineTo
                 // points[1].X, points[1].Y
-                Console.WriteLine("LineTo");
+                pathIterator.OnLine(points[1].X, points[1].Y);
                 break;
             }
             case SKPathVerb.Cubic:
@@ -38,7 +38,7 @@ static void Parse(SKPath path)
                 // points[1].X, points[1].Y
                 // points[2].X, points[2].Y
                 // points[3].X, points[3].Y
-                Console.WriteLine("LineTo");
+                pathIterator.OnCubic(points[1].X, points[1].Y, points[2].X, points[2].Y, points[3].X, points[3].Y);
                 break;
             }
             case SKPathVerb.Quad:
@@ -46,7 +46,7 @@ static void Parse(SKPath path)
                 // QuadraticBezierTo
                 // points[1].X, points[1].Y
                 // points[2].X, points[2].Y
-                Console.WriteLine("LineTo");
+                pathIterator.OnQuad(points[1].X, points[1].Y, points[2].X, points[2].Y);
                 break;
             }
             case SKPathVerb.Conic:
@@ -55,18 +55,57 @@ static void Parse(SKPath path)
                 // QuadraticBezierTo
                 // quads[1].X, quads[1].Y
                 // quads[2].X, quads[2].Y
+                pathIterator.OnQuad(quads[1].X, quads[1].Y, quads[2].X, quads[2].Y);
                 // QuadraticBezierTo
                 // quads[3].X, quads[3].Y
                 // quads[4].X, quads[4].Y
-                Console.WriteLine("Conic");
+                pathIterator.OnQuad(quads[3].X, quads[3].Y, quads[4].X, quads[4].Y);
                 break;
             }
             case SKPathVerb.Close:
             {
                 // SetClosedState(true)
-                Console.WriteLine("Close");
+                pathIterator.OnClose();
                 break;
             }
         }
     }
+}
+
+internal class DebugPathIterator : IPathIterator
+{
+    public void OnMove(double x, double y)
+    {
+        Console.WriteLine($"Move ({x} {y})");
+    }
+
+    public void OnLine(double x, double y)
+    {
+        Console.WriteLine($"Line ({x} {y})");
+    }
+
+    public void OnCubic(double x0, double y0, double x1, double y1, double x2, double y2)
+    {
+        Console.WriteLine($"Cubic ({x0} {y0}) ({x1} {y1}) ({x2} {y2})");
+    }
+
+    public void OnQuad(double x0, double y0, double x1, double y1)
+    {
+        Console.WriteLine($"Quad ({x0} {y0}) ({x1} {y1})");
+    }
+
+    public void OnClose()
+    {
+        Console.WriteLine($"Close");
+    }
+}
+
+internal interface IPathIterator
+{
+    // TODO: void OnFillType(FillType fillType);
+    void OnMove(double x, double y);
+    void OnLine(double x, double y);
+    void OnCubic(double x0, double y0, double x1, double y1, double x2, double y2);
+    void OnQuad(double x0, double y0, double x1, double y1);
+    void OnClose();
 }
